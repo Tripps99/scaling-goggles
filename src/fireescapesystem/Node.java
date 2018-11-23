@@ -18,8 +18,8 @@ public class Node {
     private int yPosition;
     private int ID;
     private boolean chosen;
-    public static final int xSize = 20;
-    public static final int ySize = 20;
+    public static final int xSize = 32;
+    public static final int ySize = 32;
 
     private ArrayList<Conection> connections = new ArrayList<Conection>();
 
@@ -95,7 +95,8 @@ public class Node {
         g.drawRect(xPosition + 2, yPosition + 2, xSize - 5, ySize - 5);
         g.setColor(infill);
         g.fillRect(xPosition + 3, yPosition + 3, xSize - 6, ySize - 6);
-        
+        g.setColor(outline);
+        g.drawString("" + ID, xPosition +(int)xSize/3, yPosition +  (int) ySize - ySize/3);
         
         //xPosition -= baseRenderPointX;
         //yPosition -= baseRenderPointY;
