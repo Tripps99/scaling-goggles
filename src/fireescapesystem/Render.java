@@ -176,13 +176,23 @@ public class Render extends Canvas implements Runnable {
                     }}    
                     }
                     if(chosenOne!=null)chosenOne.setChosen(true);
-                    if(choice){
+                    if(choice && lastOne!=null){
                     lastOne.getConnections();
                     
                     }
-                    if(!choice)
+                    System.out.println(choice);
+                   
+                    if((!choice) && chosenOne == null)
                     {nodes.add(new Node((int)mouse.getPosition().getX()-Node.xSize/2,(int) mouse.getPosition().getY()-Node.ySize/2, nodes.size()+1));
                     System.out.println("fireescapesystem.Render.update() :" + nodes.size());}
+                    
+                    if((!choice) && chosenOne!=null){
+                        System.out.println(chosenOne.getID());
+                        chosenOne.setChosen(false);
+                        chosenOne = null;
+                    choice = false;
+                    }
+                    
                 }
          //   isWin = testWin();
             }
