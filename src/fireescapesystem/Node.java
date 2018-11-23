@@ -80,6 +80,10 @@ public class Node {
         Color outline;
         Color infill;
         
+        for(Conection c : connections){
+        c.Render(g, this);
+        }
+        
         if(chosen){
         outline = Color.ORANGE;
         infill = Color.red;
