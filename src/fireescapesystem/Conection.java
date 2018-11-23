@@ -16,9 +16,17 @@ import java.awt.Graphics;
  */
 public class Conection {
     private Node destination;
+    private Node base;
     private double length;
     private boolean chosen;
-
+    private int verticalXPosition;
+    private int verticalYPosition;
+    private int verticalXSize;
+    private int verticalYSize;
+    private int horizontalXPosition;
+    private int horizontalYPosition;
+    private int horizontalXSize;
+    private int horizontalYSize;
     public boolean isChosen() {
         return chosen;
     }
@@ -28,9 +36,34 @@ public class Conection {
     }
     
     
-    public Conection(Node destination, double length) {
+    public Conection(Node base,Node destination, double length) {
         this.destination = destination;
         this.length = length;
+        this.base = base;
+        
+        if(base.getxPosition()<destination.getxPosition()){
+        this.horizontalXPosition = base.getxPosition() + Node.xSize;
+        this.horizontalYPosition = base.getyPosition() + Node.ySize/4;
+        this.horizontalXSize = -1*base.getxPosition() + destination.getxPosition() - Node.xSize/4 ;
+        this.horizontalYSize  = 2*Node.ySize/4;
+        }else{
+        this.horizontalXPosition = destination.getxPosition() + Node.xSize/4;
+        this.horizontalYPosition = base.getyPosition() + Node.ySize/4;
+        this.horizontalXSize = base.getxPosition() - destination.getxPosition() - Node.xSize/4 ;
+        this.horizontalYSize  = 2*Node.ySize/4;
+        }
+        
+        if(base.getyPosition()<destination.getyPosition()){
+        this.verticalXPosition = destination.getxPosition() + Node.xSize/4;
+        this.verticalYPosition = base.getyPosition() + Node.ySize/4 , 2* Node.xSize/4 , 1*destination.getyPosition() - base.getyPosition());
+        g.setColor(infill);
+        g.fillRect(destination.getxPosition() + Node.xSize/4 + 2, base.getyPosition() + Node.ySize/4 +2 , 2* Node.xSize/4 -4 , 1*destination.getyPosition() - base.getyPosition() - 4);
+        }
+        else{
+        g.fillRect(destination.getxPosition() + Node.xSize/4, destination.getyPosition() + Node.ySize , 2* Node.xSize/4 , -1*destination.getyPosition() + base.getyPosition() - Node.ySize /2 );
+        }
+        
+        
     }
 
     public Node getDestination() {
@@ -66,9 +99,19 @@ public class Conection {
         }
         if(base.getxPosition()<destination.getxPosition()){
         g.setColor(outline);
-        g.fillRect(base.getxPosition() + Node.xSize, base.getyPosition() + Node.ySize/4 , destination.getxPosition() + 3*Node.xSize/4, base.getyPosition() + 3*Node.ySize/4);
+        g.fillRect(base.getxPosition() + Node.xSize, base.getyPosition() + Node.ySize/4 , -1*base.getxPosition() + destination.getxPosition() - Node.xSize/4 ,  2*Node.ySize/4);
+        if(base.getyPosition()<destination.getyPosition()){
+        g.fillRect(destination.getxPosition() + Node.xSize/4, base.getyPosition() + Node.ySize/4 , 2* Node.xSize/4 , 1*destination.getyPosition() - base.getyPosition());
         g.setColor(infill);
-        g.fillRect(base.getxPosition() + Node.xSize, 2 + base.getyPosition() + Node.ySize/4 , destination.getxPosition() + 3*Node.xSize/4, -2 + base.getyPosition() + 3*Node.ySize/4);
+        g.fillRect(destination.getxPosition() + Node.xSize/4 + 2, base.getyPosition() + Node.ySize/4 +2 , 2* Node.xSize/4 -4 , 1*destination.getyPosition() - base.getyPosition() - 4);
+        }
+        else{
+        g.fillRect(destination.getxPosition() + Node.xSize/4, destination.getyPosition() + Node.ySize , 2* Node.xSize/4 , -1*destination.getyPosition() + base.getyPosition() - Node.ySize /2 );
+        }
+        
+        
+        g.setColor(infill);
+        g.fillRect(base.getxPosition() + Node.xSize , base.getyPosition() + Node.ySize/4 +2 , -1*base.getxPosition() + destination.getxPosition() - Node.xSize/4 -2 ,  2*Node.ySize/4 -4 );
         }    
         
         
