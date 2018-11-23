@@ -177,7 +177,7 @@ public class Render extends Canvas implements Runnable {
                     }
                     if(chosenOne!=null)chosenOne.setChosen(true);
                     if(choice && lastOne!=null){
-                    lastOne.getConnections().add(new Conection(chosenOne, 2.0));
+                    lastOne.getConnections().add(new Conection(lastOne,chosenOne, 2.0));
                     
                     }
                     System.out.println(choice);
