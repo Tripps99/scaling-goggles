@@ -38,7 +38,7 @@ public class Pathfinder {
     }
 
     public void seek(Node a) {
-
+        System.out.println("Actual: " + a.getID());
         ArrayList<Conection> valid = new ArrayList<Conection>();
         for (Conection c : conections) {
             if (c.getBase() == a || a == c.getDestination()) {
@@ -58,13 +58,16 @@ public class Pathfinder {
         tmp = c.getBase();
             }
          if(((tmp.isIsExit() == false) && (tmp.getSUM()> a.getSUM() + c.getLength())) || (tmp.isIsExit() == false) && tmp.getSUM()==-1){
-         tmp.setSUM(a.getSUM() + c.getLength());
+             {tmp.setSUM(a.getSUM() + c.getLength());
          if(a==c.getBase()){
          c.setWayB2D(false);
+         seek(tmp);
          }
          
+             }
+         
          }
-            seek(tmp);
+            
         
         }
     }
@@ -79,6 +82,8 @@ public class Pathfinder {
 
         for (Node e : exits) {
             e.setSUM(0);
+            System.out.println("Exit found :" + e.getID());
+            seek(e);
         }
 
     }
