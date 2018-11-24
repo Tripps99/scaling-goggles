@@ -48,10 +48,19 @@ public class Render extends Canvas implements Runnable {
     Node chosenOne = null;
     Node lastOne = null;
     private ArrayList<Node> nodes = new ArrayList<Node>();
-
+    private ArrayList<Conection> conections = new ArrayList<Conection>();
+    Conection CchousenOne = null;
+    Conection ClastOne = null;
+    
+    
     public Render() {
         this.setSize(new Dimension(800, 500));
 
+        keyboard = new KeyboardInput();
+        addKeyListener(keyboard);
+        this.addKeyListener(keyboard);
+
+        
         mouse = new MouseInput1();
 
         addMouseListener(mouse);
@@ -133,7 +142,30 @@ public class Render extends Canvas implements Runnable {
     void update() {
         // if button pressed for first time,
         // start drawing lines
-        
+        keyboard.poll();
+            if(chosenOne!=null && keyboard.keyDown(KeyEvent.VK_SPACE) ){
+                        System.out.println("fireescapesystem.Render.update() mezera");
+                        deleteNode(chosenOne);
+                    }
+            if(CchousenOne!=null && keyboard.keyDown(KeyEvent.VK_SPACE) ){
+                        System.out.println("fireescapesystem.Render.update() mezera");
+                    conections.remove(CchousenOne);
+                    }
+            if(CchousenOne!=null && keyboard.keyDownOnce(KeyEvent.VK_W) ){
+                        System.out.println("fireescapesystem.Render.update() mezera");
+                    CchousenOne.setWayB2D(!CchousenOne.isWayB2D());
+                    }
+            
+            if(chosenOne!=null && keyboard.keyDownOnce(KeyEvent.VK_E) ){
+                        System.out.println("fireescapesystem.Render.update() E");
+                        chosenOne.setIsExit(!chosenOne.isIsExit());
+                    }
+            if(CchousenOne!=null && keyboard.keyDownOnce(KeyEvent.VK_E) ){
+                        System.out.println("fireescapesystem.Render.update() E");
+                        CchousenOne.setFire(!CchousenOne.isFire());
+                    }
+            
+            
         if (mouse.buttonDownOnce(1)) {
             
             Point tmp = null;
@@ -162,42 +194,105 @@ public class Render extends Canvas implements Runnable {
 
                     }*/
                     boolean choice = false;
+                    boolean Cchoice = false;
+                    boolean DONT = false;
                     lastOne = chosenOne;
                     for(Node n: nodes){
                     if(n.getxPosition()<(int)mouse.getPosition().getX() && (int)mouse.getPosition().getX()<n.getxPosition() + Node.xSize )
                     {if(n.getyPosition()<(int)mouse.getPosition().getY() && (int)mouse.getPosition().getY()<n.getyPosition() + Node.ySize ){
+                        if(chosenOne == n){DONT = true;}
                         if(chosenOne!=null)chosenOne.setChosen(false);
                         if(n==lastOne) chosenOne = null;
                         else{
                             lastOne = chosenOne;
                             chosenOne = n;}
-                        
+                       try{
+                        CchousenOne.setChosen(false);
+                        CchousenOne = null;}
+                        catch(NullPointerException e){System.err.println(e.getMessage());}
                         choice = true;
                     }}    
                     }
                     if(chosenOne!=null)chosenOne.setChosen(true);
-                    if(choice && lastOne!=null){
-                    lastOne.getConnections().add(new Conection(lastOne,chosenOne, 2.0));
-                    
+                    if(!DONT && choice && lastOne!=null && chosenOne != lastOne){
+                    conections.add(new Conection(lastOne,chosenOne, 2.0));
+                    System.out.println("New conection :" + conections.size());
                     }
                     System.out.println(choice);
                    
-                    if((!choice) && chosenOne == null)
+                    if(!choice){
+                    
+                    for(Conection c : conections){
+                     
+                    if((c.getHorizontalXPosition()<(int)mouse.getPosition().getX() && (int)mouse.getPosition().getX()<c.getHorizontalXPosition() + c.getHorizontalXSize() ) && (c.getHorizontalYPosition()<(int)mouse.getPosition().getY() && (int)mouse.getPosition().getY()<c.getHorizontalYPosition() + c.getHorizontalYSize() ) ||( (c.getVerticalXPosition() <(int)mouse.getPosition().getX() && (int)mouse.getPosition().getX()<c.getVerticalXPosition() + c.getVerticalXSize()  ) && (c.getVerticalYPosition() <(int)mouse.getPosition().getY() && (int)mouse.getPosition().getY()<c.getVerticalYPosition() + c.getVerticalYSize()  )))
+                    //if( || )
+                    {
+                        try{
+                        CchousenOne.setChosen(false);
+                        CchousenOne = null;}
+                        catch(NullPointerException e){System.err.println(e.getMessage());}
+                        
+                        Cchoice = true;
+                        try{
+                        chosenOne.setChosen(false);
+                        chosenOne = null;}
+                        catch(NullPointerException e){System.err.println(e.getMessage());}
+                    CchousenOne = c;
+                    c.setChosen(true);
+                    
+                        
+                        System.out.println("fireescapesystem.Render.update() conc");
+                    }
+
+                    
+                    }
+                    
+                    }
+                    
+                    if((!choice) && chosenOne == null && CchousenOne == null)
                     {nodes.add(new Node((int)mouse.getPosition().getX()-Node.xSize/2,(int) mouse.getPosition().getY()-Node.ySize/2, nodes.size()+1));
                     System.out.println("fireescapesystem.Render.update() :" + nodes.size());}
                     
-                    if((!choice) && chosenOne!=null){
-                        System.out.println(chosenOne.getID());
+                    if((!choice) && chosenOne!=null  ){
+                        
+                        try{
                         chosenOne.setChosen(false);
-                        chosenOne = null;
+                        chosenOne = null;}
+                        catch(NullPointerException e){System.err.println(e.getMessage());}
+                        
                     choice = false;
                     }
+                    
+                    if(!Cchoice && CchousenOne != null){
+                    try{
+                        CchousenOne.setChosen(false);
+                        CchousenOne = null;}
+                        catch(NullPointerException e){System.err.println(e.getMessage());}
+                        
+                    }
+                                        
+                       
+                        
+                    
                     
                 }
          //   isWin = testWin();
             }
         }
 
+    }
+    
+    void deleteNode(Node n){
+    ArrayList<Conection> tmp = new ArrayList<Conection>();
+    //tmp.addAll(conections);
+    for(Conection c : conections){
+    if(c.getBase() == n || c.getDestination() == n){
+    tmp.add(c);
+    }
+    }
+    conections.removeAll(tmp);
+    nodes.remove(n);
+    chosenOne = null;
     }
 
     Point returnPoint(Point base
@@ -243,9 +338,15 @@ public class Render extends Canvas implements Runnable {
         g.setColor(Color.GRAY);
         g.fillRect(10, 110, this.getWidth() - 21, this.getHeight() - 121);
         
+        for(Conection c : conections){
+        c.Render(g);
+        }
+        
         for (Node n : this.nodes) {
             n.Render(g);
         }
+        
+        
         
         /*g.setColor(Color.WHITE);
         int gridSize = this.getWidth() - 22;
