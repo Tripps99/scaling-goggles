@@ -310,7 +310,7 @@ public class Conection implements Serializable{
         yPoints[1] = horizontalYPosition + horizontalYSize -1;
         yPoints[2] = horizontalYPosition + horizontalYSize/2;
         //g.setColor(Color.BLUE);
-        if(!(swap != 0 && hspace + swap < Node.xSize + 5))
+        if(!(swap != 0 && hspace < Node.xSize + 6))
         g.drawPolygon(xPoints, yPoints, 3);
         hspace -= Node.xSize/2 + 5;
         }
