@@ -76,6 +76,43 @@ public class Node implements Serializable{
         chosen = false;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + this.xPosition;
+        hash = 67 * hash + this.yPosition;
+        hash = 67 * hash + this.ID;
+     
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Node other = (Node) obj;
+        if (this.xPosition != other.xPosition) {
+            return false;
+        }
+        if (this.yPosition != other.yPosition) {
+            return false;
+        }
+        if (this.ID != other.ID) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    
+    
     public boolean isChosen() {
         return chosen;
     }
