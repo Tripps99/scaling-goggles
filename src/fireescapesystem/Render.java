@@ -63,6 +63,8 @@ public class Render extends Canvas implements Runnable {
     Conection CchousenOne = null;
     Conection ClastOne = null;
     Pathfinder ptf;
+    boolean Alarm = false;
+    boolean AlarmClock = false;
     
     public void readData(File a,File b) throws IOException {
         try {
@@ -201,7 +203,8 @@ public class Render extends Canvas implements Runnable {
         double nsPerTick = Math.pow(10, 9) / EstaminatedTicks;
 
         int ticks = 0;
-
+        double unpAlarm = 0;
+        double nsPerAlrm = Math.pow(10, 9) / 4;
         double unprocessedFPS = 0;
         double nsPerFPS = Math.pow(10, 9) / EstaminatedFPS;
 
@@ -209,11 +212,12 @@ public class Render extends Canvas implements Runnable {
 
             // KeyBinder();
             long nowTimeCylce = System.nanoTime();
-
+            nsPerAlrm = Math.pow(10, 9) / 4;
             nsPerTick = Math.pow(10, 9) / EstaminatedTicks;
             nsPerFPS = Math.pow(10, 9) / EstaminatedFPS;
             unprocessedTicks += (nowTimeCylce - lastTimeCycle) / nsPerTick;
             unprocessedFPS += (nowTimeCylce - lastTimeCycle) / nsPerFPS;
+            unpAlarm += (nowTimeCylce - lastTimeCycle) / nsPerAlrm;
             lastTimeCycle = nowTimeCylce;
 
             while (unprocessedTicks >= 1) {
@@ -224,6 +228,15 @@ public class Render extends Canvas implements Runnable {
                 
                 mouse.poll();
                 unprocessedTicks--;
+
+            }
+            
+            while (unpAlarm >= 1) {
+                
+                
+                if(Alarm)
+                AlarmClock = !AlarmClock;
+                   unpAlarm--;
 
             }
             while (unprocessedFPS >= 1) {
@@ -278,6 +291,12 @@ public class Render extends Canvas implements Runnable {
                 }
 
         }
+        
+        Alarm = false;
+        for(Conection  c : conections){
+        if(c.isFire()){Alarm = true;}
+        }
+        
         
         keyboard.poll();
             if(chosenOne!=null && keyboard.keyDown(KeyEvent.VK_SPACE) ){
@@ -499,9 +518,13 @@ public class Render extends Canvas implements Runnable {
         }
         Graphics g = buffer.getDrawGraphics();
         
+        if(AlarmClock)g.setColor(Color.white);
+        else{g.setColor(Color.red);}
         
+        if(!Alarm){g.setColor(Color.white);}
         
-        g.setColor(Color.GRAY);
+        g.fillRect(0, 0, this.getWidth(), this.getHeight());
+        g.setColor(Color.gray);
         g.fillRect(0, 0, this.getWidth(), 100);
         g.setColor(Color.orange);
         g.drawString("FPS: " + runtimeFPS, 20, 20);
