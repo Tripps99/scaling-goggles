@@ -113,15 +113,14 @@ public class Render extends Canvas implements Runnable {
     
     public void repair(){
     for(Node n : nodes){
-    int id = n.getID();
-    
+        
     for(Conection c: conections){
-    if(c.getBase().getID() == id){
+    if(c.getBase().equals(n) ){
     c.setBase(n);
     
     }
     
-    if(c.getDestination().getID() == id){
+    if(c.getDestination().equals(n)){
     c.setDestination(n);
     }
     
@@ -150,6 +149,22 @@ public class Render extends Canvas implements Runnable {
 
     }
 
+    public ArrayList<Node> getNodes() {
+        return nodes;
+    }
+
+    public void setNodes(ArrayList<Node> nodes) {
+        this.nodes = nodes;
+    }
+
+    public ArrayList<Conection> getConections() {
+        return conections;
+    }
+
+    public void setConections(ArrayList<Conection> conections) {
+        this.conections = conections;
+    }
+  
     public void init() {
         for (int[] row : Grid) {
             Arrays.fill(row, 0);
@@ -244,13 +259,20 @@ public class Render extends Canvas implements Runnable {
                     }
             
             if(keyboard.keyDownOnce(KeyEvent.VK_P) ){
+                repair();
                 for(Node n: nodes){
                 n.setSUM(-1);
                 }
+                
+                
+                
+                
                 System.out.println("P");    
-                ptf = new Pathfinder(nodes, conections);
-                    ptf.findAndMark();
-                    
+                
+                    findAndMark();
+                for(Node n:nodes){
+                    System.out.println(n.getID() + "  " + n.getSUM());
+                }
                     }
             
             if(keyboard.keyDownOnce(KeyEvent.VK_S) ){
@@ -528,7 +550,157 @@ public class Render extends Canvas implements Runnable {
         g.dispose();
         buffer.show();
 
+    
+    
+    }
+    
+    
+    
+    
+    
+       public void seek(Node a) {
+
+        
+        for (Conection c : conections) {
+            if (c.isFire() == false &&(c.getBase().equals(a) || c.getDestination().equals(a))) {
+                //boolean isBase = !c.getBase().equals(a);
+                for(Node n : nodes){
+                
+                    if(n.equals(c.getBase())){
+                    
+                    
+                        if(((n.isIsExit() == false) && (n.getSUM()> a.getSUM() + c.getLength())) || (n.isIsExit() == false) && n.getSUM()==-1){
+         n.setSUM(a.getSUM() + c.getLength());
+         if(c.getBase().equals(a)){
+         c.setWayB2D(false);
+         }else{c.setWayB2D(true);}
+         seek(n);
+         }
+                    
+                    }
+                    
+                    
+                    if(n.equals(c.getDestination())){
+                    
+                             if(((n.isIsExit() == false) && (n.getSUM()> a.getSUM() + c.getLength())) || (n.isIsExit() == false) && n.getSUM()==-1){
+         n.setSUM(a.getSUM() + c.getLength());
+         if(c.getBase().equals(a)){
+         c.setWayB2D(false);
+         }else{c.setWayB2D(true);}
+         seek(n);
+         }
+                    }
+                    
+                }
+                
+                
+                
+
+            }
+
+        }
+        
+         
+            
+        
+        }
+
+    
+    
+    public void findAndMark() {
+        
+        for (Node n : nodes) {
+            if (n.isIsExit()) {
+                seek(n);
+                repair();
+            }
+        }
+
+        
     }
 
 }
+ 
+/*
+public void seek(Node a) {
+        System.out.println("Actual: " + a.getID());
+        ArrayList<Conection> valid = new ArrayList<Conection>();
+        for (Conection c : conections) {
+            if (c.getBase().equals(a) || a.equals(c.getDestination())) {
+                valid.add(c);
+                
+            }
 
+        }
+        
+       
+        
+        for(Conection c : conections){
+        
+            
+            if(valid.contains(c)){
+            int tmp = 0;
+            
+        //c.getDestination().setSUM(a.getSUM() + c.getLength());
+        
+        if(a.equals(c.getBase())){
+        for(Node n: nodes){
+        if(n.equals(c.getDestination())){tmp = nodes.lastIndexOf(n);}
+        }
+        }
+        
+         if(a.equals(c.getDestination())){
+        for(Node n: nodes){
+        if(n.equals(c.getBase())){tmp = nodes.lastIndexOf(n);}
+        }
+        }
+         
+                System.out.println(tmp + "");
+        
+                
+         if(nodes.get(tmp).isIsExit() == false && nodes.get(tmp).getSUM()> a.getSUM() + c.getLength() || nodes.get(tmp).isIsExit() == false && nodes.get(tmp).getSUM()==-1)
+             {nodes.get(WIDTH) .setSUM(a.getSUM() + c.getLength());
+             
+             
+             
+             if(a.equals(c.getBase())){
+         c.setWayB2D(false);
+         
+         }
+         for(Conection d : conections){
+         if(d.getBase().equals(tmp)){
+             System.out.println("FCdC" +nodes.get(tmp).getID());
+             d.setBase(nodes.get(tmp));
+         }
+         if(d.getDestination().equals(tmp)){
+         System.out.println("FDdD" + nodes.get(tmp).getID());
+             d.setDestination(nodes.get(tmp));
+         
+             
+         }
+         seek(nodes.get(tmp));
+         
+             
+            
+         }
+            
+        }
+        }}}
+    
+    
+    public void findAndMark() {
+        ArrayList<Node> exits = new ArrayList<Node>();
+        for (Node n : nodes) {
+            if (n.isIsExit()) {
+                exits.add(n);
+            }
+        }
+
+        for (Node e : exits) {
+            e.setSUM(0);
+            System.out.println("Exit found :" + e.getID());
+            seek(e);
+        }
+
+    }
+*/
