@@ -6,6 +6,7 @@
 package fireescapesystem;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -17,19 +18,29 @@ public class Node {
     private int xPosition;
     private int yPosition;
     private int ID;
+    private double SUM;
     private boolean chosen;
+    private boolean isExit = false;
     public static final int xSize = 32;
     public static final int ySize = 32;
 
-    private ArrayList<Conection> connections = new ArrayList<Conection>();
-
-    public ArrayList<Conection> getConnections() {
-        return connections;
+    public boolean isIsExit() {
+        return isExit;
     }
 
-    public void setConnections(ArrayList<Conection> connections) {
-        this.connections = connections;
+    public void setIsExit(boolean isExit) {
+        this.isExit = isExit;
     }
+
+    public double getSUM() {
+        return SUM;
+    }
+
+    public void setSUM(double SUM) {
+        this.SUM = SUM;
+    }
+
+    
     
     
     
@@ -80,9 +91,8 @@ public class Node {
         Color outline;
         Color infill;
         
-        for(Conection c : connections){
-        c.Render(g, this);
-        }
+        
+        
         
         if(chosen){
         outline = Color.ORANGE;
@@ -92,6 +102,10 @@ public class Node {
         infill = Color.darkGray;
         
         }
+        
+        if(isExit){
+        outline = Color.WHITE;
+        }
             
         g.setColor(outline);
         g.fillRect(xPosition, yPosition, xSize, ySize);
@@ -100,6 +114,13 @@ public class Node {
         g.setColor(infill);
         g.fillRect(xPosition + 3, yPosition + 3, xSize - 6, ySize - 6);
         g.setColor(outline);
+        if(isExit){
+        Font f = g.getFont();
+        g.setFont(new Font(Font.SERIF, Font.PLAIN, 10));
+        g.drawString("E ", xPosition +(int)xSize/5, yPosition +  (int) ySize - 2*ySize/3);
+        g.drawString(" " + ID, xPosition +(int)xSize/5, yPosition +  (int) ySize - ySize/3);
+        g.setFont(f);
+        }else
         g.drawString("" + ID, xPosition +(int)xSize/3, yPosition +  (int) ySize - ySize/3);
         
         //xPosition -= baseRenderPointX;
