@@ -10,6 +10,7 @@ import static fireescapesystem.Node.ySize;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  *
@@ -40,6 +41,41 @@ public class Conection implements Serializable{
         this.wayB2D = wayB2D;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + Objects.hashCode(this.destination);
+        hash = 83 * hash + Objects.hashCode(this.base);
+        hash = 83 * hash + (int) (Double.doubleToLongBits(this.length) ^ (Double.doubleToLongBits(this.length) >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Conection other = (Conection) obj;
+        if (Double.doubleToLongBits(this.length) != Double.doubleToLongBits(other.length)) {
+            return false;
+        }
+        if (!Objects.equals(this.destination, other.destination)) {
+            return false;
+        }
+        if (!Objects.equals(this.base, other.base)) {
+            return false;
+        }
+        return true;
+    }
+
+    
+    
     public boolean isFire() {
         return fire;
     }
