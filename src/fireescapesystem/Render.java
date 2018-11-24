@@ -35,7 +35,9 @@ public class Render extends Canvas implements Runnable {
     
     File a =new File("nodes.data");
     File b =new File("conections.data");
-    
+    private String ClientSentence;
+    private TCPServer tcp = new TCPServer(ClientSentence); 
+    private Thread t1 = new Thread(tcp);
     boolean isRunning;
     public static int EstaminatedTicks = 60;
     public static int EstaminatedFPS = 10;
@@ -127,6 +129,18 @@ public class Render extends Canvas implements Runnable {
     }
     
     }
+    }
+
+    public void setData(){
+    conections.get(2).setCable(1);
+    conections.get(7).setCable(2);
+    conections.get(3).setCable(3);
+   conections.get(11).setCable(4);
+   conections.get(6).setCable(5);
+
+   //conections.get(4).setFire(true);
+    
+    
     }    
         
     public Render() {
@@ -147,6 +161,8 @@ public class Render extends Canvas implements Runnable {
 
         this.addMouseMotionListener(mouse);
 
+       
+        
     }
 
     public ArrayList<Node> getNodes() {
@@ -166,6 +182,7 @@ public class Render extends Canvas implements Runnable {
     }
   
     public void init() {
+        t1.start();
         for (int[] row : Grid) {
             Arrays.fill(row, 0);
         }
@@ -235,6 +252,33 @@ public class Render extends Canvas implements Runnable {
     void update() throws IOException {
         // if button pressed for first time,
         // start drawing lines
+        ClientSentence = tcp.pool();
+        
+        if(ClientSentence != null){
+            System.out.println(ClientSentence);
+            int cable = Integer.parseInt(ClientSentence);
+            for(Conection c : conections){
+            if(c.getCable()==cable){
+            c.setFire(true);
+            
+            }
+            }
+            repair();
+                for(Node n: nodes){
+                n.setSUM(-1);
+                }
+                
+                
+                
+                
+                System.out.println("P");    
+                    findAndMark();
+                for(Node n:nodes){
+                    System.out.println(n.getID() + "  " + n.getSUM());
+                }
+
+        }
+        
         keyboard.poll();
             if(chosenOne!=null && keyboard.keyDown(KeyEvent.VK_SPACE) ){
                         System.out.println("fireescapesystem.Render.update() mezera");
@@ -268,7 +312,6 @@ public class Render extends Canvas implements Runnable {
                 
                 
                 System.out.println("P");    
-                
                     findAndMark();
                 for(Node n:nodes){
                     System.out.println(n.getID() + "  " + n.getSUM());
@@ -287,6 +330,11 @@ public class Render extends Canvas implements Runnable {
                 
             }
             
+            if(keyboard.keyDownOnce(KeyEvent.VK_K) ){
+                System.out.println("K");    
+                setData();
+                
+            }
 
             
         if (mouse.buttonDownOnce(1)) {
