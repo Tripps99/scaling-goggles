@@ -8,17 +8,18 @@ package fireescapesystem;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author martin
  */
-public class Node {
+public class Node implements Serializable{
     private int xPosition;
     private int yPosition;
     private int ID;
-    private double SUM;
+    private double SUM = -1;
     private boolean chosen;
     private boolean isExit = false;
     public static final int xSize = 32;
