@@ -5,7 +5,7 @@
 
 typedef struct{
     int to_N;
-    double lenght_con;
+    double lenght;
 }C;
 
 typedef struct{
@@ -15,58 +15,62 @@ typedef struct{
 
     double sum;
     int direction;
-    bool way;
+    bool exit;
 }N;
 
-void in_node(N node[], size_t nm)
+void init_nodes(N node[], size_t p_exit_nodes, size_t nm)
 {
     int i;
-        for(i = 0; i < nm; i++){
+        for(i = 0; i < p_exit_nodes; i++){
             node[i].nm_node = i;
-            node[i].sum = 0;
+            node[i].sum = -1;
             node[i].direction = -1;
-            node[i].way = true;
+            node[i].exit = true;
         }
-}
-
-void set_data_in(N node[], size_t nm)
-{
-    int i, a;
-    int n;
-    const int exits = rand()%4 + 1;
-    printf("pocet vychodu %d",exits);
-
-        for(i = 0; i < nm; i++){
-            n = rand()%5 + 1;
-            node[i].p_ulic = n;
-            node[i].cn = (C*)malloc(n*sizeof(C));
-                for(a = 0; a < n; a++){
-                    node[i].cn[a].lenght_con = rand()%10 + 1;
-                    node[i].cn[a].to_N = rand()%nm;
-                    if(i < exits)node[i].way = false;
-                }
+        for(i = p_exit_nodes;i<nm; i++)
+        {
+            node[i].nm_node = i;
+            node[i].sum = 1000;
+            node[i].direction = -1;
+            node[i].exit = false;
         }
-
-
-}
-
-void find_the_way(N node[], size_t nm)
-{
-    int i = 0;
     int a;
-    int lg;
-
-        while(node[i].way == false){
-            lg = node[i].p_ulic;
-             printf("x%d\n", lg);
-            for(a = 0; a < lg; a++){
-                if(node[i].cn[a].lenght_con - node[node[i].cn[a].to_N].sum > 0 || a == 0){
-                    node[node[i].cn[a].to_N].sum += node[i].cn[a].lenght_con - node[node[i].cn[a].to_N].sum;
-                    node[node[i].cn[a].to_N].direction = node[i].nm_node;
+        for(i = 0; i < nm; i++){
+            node[i].p_ulic = rand()%5 + 1;
+            node[i].cn = (C*)malloc(node[i].p_ulic*sizeof(C));
+                for(a = 0; a < node[i].p_ulic; a++){
+                    node[i].cn[a].lenght = rand()%10 + 1;
+                    do
+                    {
+                        node[i].cn[a].to_N = rand()%nm;
+                    }
+                    while(node[i].cn[a].to_N==i);
                 }
+        }
+}
 
+
+void rec_exit(N node[], int i)
+{
+    int a;
+        for(a = 0; a < node[i].p_ulic; a++){
+            if((node[node[i].cn[a].to_N].sum >= (node[i].cn[a].lenght + node[i].sum)) && (node[node[i].cn[a].to_N].exit!=true))
+            {
+                printf("ted");
+                node[node[i].cn[a].to_N].sum = node[i].cn[a].lenght + node[i].sum;
+                node[node[i].cn[a].to_N].direction = i;
+                rec_exit(node,(node[i].cn[a].to_N));
             }
-            i++;
+        }
+}
+
+
+void find_the_exit(N node[], size_t p_exit_nodes, size_t nm)
+{
+    int i;
+
+        for(i = 0; i < p_exit_nodes; i++){
+            rec_exit(node,i);
         }
 }
 
@@ -75,13 +79,15 @@ void show_status(N node[], size_t nm)
     int i, a;
     int lg;
         for(i = 0; i < nm; i++){
-            printf("%d.Node :", i);
-            lg = node[i].p_ulic;
-
-                for(a = 0; a < lg; a++){
-                    printf("conection to:%d, lenght of conection: %lf\n", node[i].cn[a].to_N, node[i].cn[a].lenght_con);
+            printf("\n\n %d.Node :\n", i);
+                for(a = 0; a < node[i].p_ulic; a++){
+                    printf("conection to:%d, lenght of conection: %lf\n", node[i].cn[a].to_N, node[i].cn[a].lenght);
                 }
-                printf("Escape to:%d\n", node[i].direction);
+                if(node[i].exit==true)
+                {
+                    printf("Already vystup\n");
+                }
+                else{printf("Escape to:%d\n", node[i].direction);}
         }
 
 }
@@ -90,16 +96,18 @@ int main()
 {
     srand(time(NULL));
     size_t nm;
-        scanf("%d", &nm);
-        N Node[nm];
+    scanf("%d", &nm);
+    N Node[nm];
+    size_t p_exit_nodes = rand()%4 + 1;
+    printf("XXXXXXXXXX%d",p_exit_nodes);
 
-            in_node(Node, nm);
-            set_data_in(Node, nm);
+            init_nodes(Node,p_exit_nodes, nm);
 
                 show_status(Node, nm);
 
-                find_the_way(Node, nm);
-                    show_status(Node, nm);
+                find_the_exit(Node, p_exit_nodes, nm);
+
+                show_status(Node, nm);
 
 
     return 0;
