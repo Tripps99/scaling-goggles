@@ -16,6 +16,13 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -26,6 +33,8 @@ import java.util.Arrays;
 public class Render extends Canvas implements Runnable {
 
     
+    File a =new File("nodes.data");
+    File b =new File("conections.data");
     
     boolean isRunning;
     public static int EstaminatedTicks = 60;
@@ -51,8 +60,76 @@ public class Render extends Canvas implements Runnable {
     private ArrayList<Conection> conections = new ArrayList<Conection>();
     Conection CchousenOne = null;
     Conection ClastOne = null;
+    Pathfinder ptf;
     
+    public void readData(File a,File b) throws IOException {
+        try {
+            ObjectInputStream oisA = new ObjectInputStream(new FileInputStream(a));
+            nodes = (ArrayList<Node>) oisA.readObject();
+        } catch (FileNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        } catch (ClassNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+        try {
+            ObjectInputStream oisB = new ObjectInputStream(new FileInputStream(b));
+            conections = (ArrayList<Conection>) oisB.readObject();
+        } catch (FileNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        } catch (ClassNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+        
+        for(Conection c : conections){
+        System.out.println(c.getDestination().getID());
+        }
+        
+        repair();
+    }
     
+        public void writeData(File a,File b) {
+        try {
+            ObjectOutputStream oosA = new ObjectOutputStream(new FileOutputStream(a));
+            oosA.writeObject(nodes);
+        } catch (FileNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+        try {
+            ObjectOutputStream oosB = new ObjectOutputStream(new FileOutputStream(b));
+            oosB.writeObject(conections);
+        } catch (FileNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+
+    }
+    
+    public void repair(){
+    for(Node n : nodes){
+    int id = n.getID();
+    
+    for(Conection c: conections){
+    if(c.getBase().getID() == id){
+    c.setBase(n);
+    
+    }
+    
+    if(c.getDestination().getID() == id){
+    c.setDestination(n);
+    }
+    
+    }
+    
+    }
+    }    
+        
     public Render() {
         this.setSize(new Dimension(800, 500));
 
@@ -110,7 +187,8 @@ public class Render extends Canvas implements Runnable {
             while (unprocessedTicks >= 1) {
                 ticks++;
                 
-                    this.update();
+                   try{ this.update();}
+                   catch(IOException e){ System.out.println("catashrophe: " + e.getMessage());}
                 
                 mouse.poll();
                 unprocessedTicks--;
@@ -139,7 +217,7 @@ public class Render extends Canvas implements Runnable {
 
     
 
-    void update() {
+    void update() throws IOException {
         // if button pressed for first time,
         // start drawing lines
         keyboard.poll();
@@ -165,6 +243,29 @@ public class Render extends Canvas implements Runnable {
                         CchousenOne.setFire(!CchousenOne.isFire());
                     }
             
+            if(keyboard.keyDownOnce(KeyEvent.VK_P) ){
+                for(Node n: nodes){
+                n.setSUM(-1);
+                }
+                System.out.println("P");    
+                ptf = new Pathfinder(nodes, conections);
+                    ptf.findAndMark();
+                    
+                    }
+            
+            if(keyboard.keyDownOnce(KeyEvent.VK_S) ){
+                System.out.println("S");    
+                writeData(a, b);
+                
+            }
+            if(keyboard.keyDownOnce(KeyEvent.VK_O) ){
+                System.out.println("O");    
+                try{readData(a, b);}
+                catch(IOException e){System.err.println(e.getMessage());}
+                
+            }
+            
+
             
         if (mouse.buttonDownOnce(1)) {
             
@@ -288,6 +389,7 @@ public class Render extends Canvas implements Runnable {
     for(Conection c : conections){
     if(c.getBase() == n || c.getDestination() == n){
     tmp.add(c);
+    System.out.println(c.getBase().getID() +  "-" + c.getDestination().getID() );
     }
     }
     conections.removeAll(tmp);
