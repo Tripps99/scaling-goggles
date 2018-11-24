@@ -19,11 +19,22 @@ import java.util.Objects;
 public class Conection implements Serializable{
     private Node destination;
     private Node base;
+    private int cable;
     private double length;
     private boolean chosen;
     private boolean fire = false;
     private boolean wayB2D = true;
+
+    public int getCable() {
+        return cable;
+    }
+
+    public void setCable(int cable) {
+        this.cable = cable;
+    }
     
+    
+     
     private int verticalXPosition;
     private int verticalYPosition;
     private int verticalXSize;
