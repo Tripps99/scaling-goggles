@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <time.h>
+
+
 
 typedef struct{
     int to_N;
@@ -36,15 +37,15 @@ void init_nodes(N node[], size_t p_exit_nodes, size_t nm)
         }
     int a;
         for(i = 0; i < nm; i++){
-            node[i].p_ulic = rand()%5 + 1;
+                printf("Number of streets u %d\n", i);
+            scanf("%d", &node[i].p_ulic);
             node[i].cn = (C*)malloc(node[i].p_ulic*sizeof(C));
                 for(a = 0; a < node[i].p_ulic; a++){
-                    node[i].cn[a].lenght = rand()%10 + 1;
-                    do
-                    {
-                        node[i].cn[a].to_N = rand()%nm;
-                    }
-                    while(node[i].cn[a].to_N==i);
+                    printf("Delka spojeni\n");
+                    scanf("%lf", &node[i].cn[a].lenght);
+                        printf("Kam\n");
+                        scanf("%d", &node[i].cn[a].to_N);
+
                 }
         }
 }
@@ -98,8 +99,10 @@ int main()
     size_t nm;
     scanf("%d", &nm);
     N Node[nm];
-    size_t p_exit_nodes = rand()%4 + 1;
-    printf("XXXXXXXXXX%d",p_exit_nodes);
+    size_t p_exit_nodes;
+    printf("Pocet vystupu\n");
+    scanf("%d", &p_exit_nodes);
+
 
             init_nodes(Node,p_exit_nodes, nm);
 
