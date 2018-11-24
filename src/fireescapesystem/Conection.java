@@ -9,12 +9,13 @@ import static fireescapesystem.Node.xSize;
 import static fireescapesystem.Node.ySize;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 
 /**
  *
  * @author martin
  */
-public class Conection {
+public class Conection implements Serializable{
     private Node destination;
     private Node base;
     private double length;
